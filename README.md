@@ -12,6 +12,13 @@
 
 Соревнование, спортсмен и забег(результат спортсмена)
 
+Атрибуты спортсмена: Пол, Регион, Тренер, Фамилия, Имя, Отчество, Возраст.
+
+Атрибуты соревнования: Главный судья, Название, Место проведения, Дата проведения.
+
+Соревнования проводятся в 2-3 дня и спортсмен может сбегать несколько раз, одну и ту же дистанцию, 
+либо несколько раз в один и тот же день, следовательно лучше вынести это из сущности Забег и выделить ещё
+"День соревнования" и "Дистанция".
 
 
 То что у нас получилось:
@@ -94,7 +101,7 @@
 ![alt text](image-1.png)
 
 Чтобы было поинтересней возьмём реальные имена конькобежцев с сайта speedskating results.
-
+(там даже я есть :) )
 Ссылки прилагаю: 
 
 1) https://speedskatingresults.com/index.php?p=4&e=22764&g=1&s=63526
@@ -297,3 +304,47 @@ for athlete in athletes:
 ---
 ## Несколько запросов к БД
 
+Все атлеты из Пермского края и их тренеры
+``` sql
+SELECT first_name, last_name, coach_name
+FROM Athlete
+WHERE region = 'Perm';
+```
+
+Все соревнования и их судьи
+``` sql
+SELECT competition_name, chief_judge
+FROM Competition;
+```
+
+Сколько забегов было у каждого спортсмена
+``` sql
+SELECT a.first_name, a.last_name, COUNT(r.race_id) AS number_of_races
+FROM Athlete a
+LEFT JOIN Race r ON a.athlete_id = r.athlete_id
+GROUP BY a.athlete_id;
+```
+
+Соревнования, которые проходили в определенные даты
+``` sql
+SELECT competition_name, start_date, end_date
+FROM Competition
+WHERE start_date BETWEEN '2023-12-01' AND '2023-12-31';
+```
+
+Все спортсмены, участвующие в забегах на дистанции 500 метров на соревнованиях "Чемпионат города Пермь"
+``` sql
+SELECT a.first_name, a.last_name
+FROM Athlete a
+JOIN Race r ON a.athlete_id = r.athlete_id
+JOIN Distance d ON r.distance_id = d.distance_id
+JOIN CompetitionDay cd ON d.competition_day_id = cd.competition_day_id
+JOIN Competition c ON cd.competition_id = c.competition_id
+WHERE d.distance_length = 500 AND c.competition_name = 'Чемпионат города Пермь';
+```
+
+## Выводы
+
+Самое трудное при работе с БД - это этап проектирования, необходимо учесть все тонкости ПО и дальнейшей работы с данными,
+чтобы получить удовлетворительную нормальную форму БД, так как это помогает уменьшить избыточность данных и улучшить целостность.
+Дальнейшие действия при работе - технические тонкости. Самое главное продумать все сценарии использования и отразить это в модели и схемах.
