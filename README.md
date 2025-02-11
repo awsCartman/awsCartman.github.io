@@ -93,8 +93,10 @@
 Так выглядит конфигурация подключения:
 ![alt text](image-1.png)
 
-Чтобы было поинтересней возьмём реальные имена конькобежцев с сайта speedskating results. 
+Чтобы было поинтересней возьмём реальные имена конькобежцев с сайта speedskating results.
+
 Ссылки прилагаю: 
+
 1) https://speedskatingresults.com/index.php?p=4&e=22764&g=1&s=63526
 
 2) https://speedskatingresults.com/index.php?p=4&e=22764&s=63526
@@ -108,7 +110,7 @@
 ![alt text](image.png)
 
 
-\```python
+```python
 import requests
 from bs4 import BeautifulSoup
 import re
@@ -145,11 +147,11 @@ with open("athletes.txt", "w") as file:
         file.write(f"{athlete}\n")
 
 print("Athletes extracted and written to 'athletes.txt'")
-\```
+```
 
 #### Далее заполним соревнования, соревновательные дни и дистанции.
 
-\```python
+```python
 
 # Список атлетов
 athletes = read_athletes('./athletes.txt')
@@ -223,7 +225,7 @@ for athlete in athletes:
         INSERT INTO Athlete (first_name, last_name, middle_name, region, coach_name, age)
         VALUES (%s, %s, %s, %s, %s, %s)
     """, (first_name, last_name, '', region, coach, age))
-\```
+```
 
 
 
@@ -232,7 +234,7 @@ for athlete in athletes:
 
 
 
-\```python
+```python
 # Получаем список всех атлетов
 cursor.execute("""
     SELECT athlete_id, first_name, last_name FROM Athlete
@@ -291,7 +293,7 @@ for athlete in athletes:
                     INSERT INTO Race (distance_id, athlete_id, result)
                     VALUES (%s, %s, %s)
                 """, (distance_id, athlete_id, result))
-\```
+```
 ---
 ## Несколько запросов к БД
 
